@@ -503,134 +503,85 @@ let a = [
     }
   ];
 
-
+// Create heading
 let h1 = document.createElement("h1");
-h1.setAttribute("id","title");
-h1.setAttribute("style","font-family:Times New Roman;text-align:center;margin-top:20px;");
-
-h1.innerText="Pagination Using DOM";
+h1.id = "title";
+h1.style = "font-family:Times New Roman;text-align:center;margin-top:20px;";
+h1.innerText = "Pagination Using DOM";
 
 let d2 = document.createElement("p");
-d2.setAttribute("id","description");
-d2.setAttribute("style","font-size:30px;text-align:center;margin-top:20px;")
-d2.innerText="With Responsive Table";
+d2.id = "description";
+d2.style = "font-size:30px;text-align:center;margin-top:20px;";
+d2.innerText = "With Responsive Table";
 
-  let d1 = document.createElement("div");
-
-  d1.setAttribute("class","table-responsive");
-
+let d1 = document.createElement("div");
+d1.className = "table-responsive";
 
 let t = document.createElement("table");
-
-t.setAttribute("class","table table-bordered");
-
-t.setAttribute("id","mytable");
-
-
-
-
-
-let tr1 = document.createElement("tr");
+t.className = "table table-bordered";
+t.id = "mytable";
 
 let th = document.createElement("thead");
+th.innerHTML = "<tr><th>Id</th><th>Name</th><th>E-Mail</th></tr>";
 
 let tbody = document.createElement("tbody");
+tbody.id = "tab";
 
-tbody.setAttribute("id","tab");
-
-let d3 = document.createElement("div");
-
-d3.setAttribute("class","d-flex justify-content-center");
-d3.setAttribute("id","buttons");
-d3.setAttribute("style","font-size:20px;font-family:Times New Roman;");
-d3.innerHTML = `<button type="button" value="submit" onClick="first()">First</button> 
-<button type="button" value="submit">Previous</button> 
-<button type="button" value="submit">Next</button> 
-<button type="button" value="submit" onClick="last()">Last</button> `;
-
-let row = [];
-let dummyfirst=0;
-let dummylast=0;
-
-
-
-
-console.log(a);
-
-
-tr1.innerHTML = "<tr><th>Id</th><th>Name</th><th>E-Mail</th></tr>";
-
-th.append(tr1);
-t.append(th);
-
-for(let i=0;i<10;i++)
-{
-
-    row[i] = document.createElement("tr");
-    row[i].setAttribute("id",i);
-row[i].innerHTML = `<td>${a[i].id}</td><td>${a[i].name}</td><td>${a[i].email}</td>`;
-tbody.append(row[i]);
-++dummyfirst;
-}
-
-function first()
-{
-
-
-
-    
-
-
-for(let i=0;i<10;i++)
-{
-   let x = document.getElementById(`"${i}"`);
-x.remove();
-    row[i] = document.createElement("tr");
-    row[i].setAttribute("id",i);
-row[i].innerHTML = `<td>${a[i].id}</td><td>${a[i].name}</td><td>${a[i].email}</td>`;
-tbody.append(row[i]);
-
-
-
-}
-    }
-
-
-
-
-
-function last()
-{
-   
-
-
-for(let i=90;i<100;i++)
-{
-let x = document.getElementById(`"${i}"`);
-x.remove();
-
-    row[i] = document.createElement("tr");
-    row[i].setAttribute("id",i);
-row[i].innerHTML = `<td>${a[i].id}</td><td>${a[i].name}</td><td>${a[i].email}</td>`;
-tbody.append(row[i]);
-
-}
-    }
-
-    
-
-
-
-
-
-t.append(tbody);
+t.append(th, tbody);
 d1.append(t);
 
+// Pagination buttons
+let d3 = document.createElement("div");
+d3.className = "d-flex justify-content-center";
+d3.id = "buttons";
+d3.style = "font-size:20px;font-family:Times New Roman;";
+d3.innerHTML = `
+  <button onclick="first()">First</button>
+  <button onclick="prev()">Previous</button>
+  <button onclick="next()">Next</button>
+  <button onclick="last()">Last</button>
+`;
 
+document.body.append(h1, d2, d1, d3);
 
+// Pagination logic
+let currentPage = 1;
+let rowsPerPage = 10;
 
+function renderTable(page) {
+  tbody.innerHTML = ""; // clear old rows
+  let start = (page - 1) * rowsPerPage;
+  let end = start + rowsPerPage;
+  for (let i = start; i < end && i < a.length; i++) {
+    let row = document.createElement("tr");
+    row.innerHTML = `<td>${a[i].id}</td><td>${a[i].name}</td><td>${a[i].email}</td>`;
+    tbody.append(row);
+  }
+}
 
+function first() {
+  currentPage = 1;
+  renderTable(currentPage);
+}
 
+function last() {
+  currentPage = Math.ceil(a.length / rowsPerPage);
+  renderTable(currentPage);
+}
 
+function next() {
+  if (currentPage < Math.ceil(a.length / rowsPerPage)) {
+    currentPage++;
+    renderTable(currentPage);
+  }
+}
 
-document.body.append(h1,d2,d1,d3);
+function prev() {
+  if (currentPage > 1) {
+    currentPage--;
+    renderTable(currentPage);
+  }
+}
+
+// Initial render
+renderTable(currentPage);
